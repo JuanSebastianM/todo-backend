@@ -1,0 +1,27 @@
+{
+  "name": "todo-backend",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc",
+    "start": "npm run compile && node ./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuanSebastianM/todo-backend.git"
+  },
+  "author": "JuanMendozaDev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JuanSebastianM/todo-backend/issues"
+  },
+  "homepage": "https://github.com/JuanSebastianM/todo-backend#readme",
+  "type": "module",
+  "dependencies": {
+    "@apollo/server": "^4.7.1",
+    "graphql": "^16.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.1.0",
+    "typescript": "^5.0.4"
+  }
+}

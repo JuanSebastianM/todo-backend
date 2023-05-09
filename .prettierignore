@@ -1,0 +1,11 @@
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+
+public/
+.env
+.env.example
+package.json
+package-lock.json
+yarn.lock
