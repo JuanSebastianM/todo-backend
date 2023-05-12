@@ -17,11 +17,11 @@
   "homepage": "https://github.com/JuanSebastianM/todo-backend#readme",
   "type": "module",
   "dependencies": {
-    "@apollo/server": "^4.7.1",
-    "graphql": "^16.6.0"
+    "@apollo/server": "4.7.1",
+    "graphql": "16.6.0"
   },
   "devDependencies": {
-    "@types/node": "^20.1.0",
-    "typescript": "^5.0.4"
+    "@types/node": "20.1.0",
+    "typescript": "5.0.4"
   }
 }
