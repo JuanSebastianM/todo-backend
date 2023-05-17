@@ -12,10 +12,10 @@
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "baseUrl": ".",
-    "isolatedModules": true,
     "paths": {
       "models/*": ["src/db/models/*"],
-      "schema/*": ["src/graphql/schema/*"]
+      "tasks/*": ["src/graphql/tasks/*"],
+      "generatedTypes/*": ["src/__generated__/*"]
     }
   },
   "include": ["src"]

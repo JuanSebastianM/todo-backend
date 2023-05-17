@@ -1,18 +1,17 @@
-import { ApolloServer } from '@apollo/server';
+import { ApolloServer, BaseContext } from '@apollo/server';
 import {
   ApolloServerPluginLandingPageLocalDefault,
   ApolloServerPluginLandingPageProductionDefault,
 } from '@apollo/server/plugin/landingPage/default';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { resolvers } from 'schema/tasks/resolvers';
-import { typeDefs } from 'schema/tasks/typeDefs';
+import { readFileSync } from 'fs';
+import { resolvers } from 'tasks/resolvers';
 
-const server = new ApolloServer({
+const typeDefs = readFileSync('src/graphql/tasks/typeDefs.graphql', 'utf-8');
+
+const server = new ApolloServer<BaseContext>({
   typeDefs,
   resolvers,
-  apollo: {
-    key: process.env.APOLLO_KEY,
-  },
   plugins: [
     process.env.NODE_ENV === 'production'
       ? ApolloServerPluginLandingPageProductionDefault({
