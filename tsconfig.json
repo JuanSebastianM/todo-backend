@@ -13,7 +13,7 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "models/*": ["src/db/models/*"],
+      "db/*": ["src/db/*"],
       "tasks/*": ["src/graphql/tasks/*"],
       "generatedTypes/*": ["src/__generated__/*"]
     }

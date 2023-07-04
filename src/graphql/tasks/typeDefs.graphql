@@ -1,17 +1,40 @@
+scalar Date
+
 type Task {
-  id: ID
-  title: String
+  authorEmail: String!
+  id: ID!
+  title: String!
   description: String
-  done: Boolean
+  done: Boolean!
+  createdAt: Date
+  updatedAt: Date
+}
+
+input TaskInput {
+  title: String!
+  description: String
+}
+
+interface MutationResponse {
+  code: Int!
+  success: Boolean!
+  message: String!
+}
+
+type TaskMutationResponse implements MutationResponse {
+  code: Int!
+  success: Boolean!
+  message: String!
+  task: Task
 }
 
 type Query {
-  getAllTasks: [Task]
+  tasks(authorEmail: String!): [Task!]!
 }
 
 type Mutation {
-  createTask(title: String!, description: String): Task
-  editTask(id: ID!, title: String, description: String): Task
-  editTaskStatus(id: ID!, done: Boolean!): Task
-  deleteTask(id: ID!): Task
+  createTask(authorEmail: String!, task: TaskInput!): TaskMutationResponse
+  editTask(id: ID!, task: TaskInput!): TaskMutationResponse
+  editTaskStatus(id: ID!, done: Boolean!): TaskMutationResponse
+  deleteTask(id: ID!): TaskMutationResponse
 }

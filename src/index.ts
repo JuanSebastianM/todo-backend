@@ -4,8 +4,11 @@ import {
   ApolloServerPluginLandingPageProductionDefault,
 } from '@apollo/server/plugin/landingPage/default';
 import { startStandaloneServer } from '@apollo/server/standalone';
+import { connectToDB } from 'db/index';
 import { readFileSync } from 'fs';
 import { resolvers } from 'tasks/resolvers';
+
+await connectToDB();
 
 const typeDefs = readFileSync('src/graphql/tasks/typeDefs.graphql', 'utf-8');
 

@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -12,20 +12,21 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: Date;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createTask?: Maybe<Task>;
-  deleteTask?: Maybe<Task>;
-  editTask?: Maybe<Task>;
-  editTaskStatus?: Maybe<Task>;
+  createTask?: Maybe<TaskMutationResponse>;
+  deleteTask?: Maybe<TaskMutationResponse>;
+  editTask?: Maybe<TaskMutationResponse>;
+  editTaskStatus?: Maybe<TaskMutationResponse>;
 };
 
 
 export type MutationCreateTaskArgs = {
-  description?: InputMaybe<Scalars['String']>;
-  title: Scalars['String'];
+  authorEmail: Scalars['String'];
+  task: TaskInput;
 };
 
 
@@ -35,9 +36,8 @@ export type MutationDeleteTaskArgs = {
 
 
 export type MutationEditTaskArgs = {
-  description?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
-  title?: InputMaybe<Scalars['String']>;
+  task: TaskInput;
 };
 
 
@@ -46,17 +46,44 @@ export type MutationEditTaskStatusArgs = {
   id: Scalars['ID'];
 };
 
+export type MutationResponse = {
+  code: Scalars['Int'];
+  message: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
 export type Query = {
   __typename?: 'Query';
-  getAllTasks?: Maybe<Array<Maybe<Task>>>;
+  tasks: Array<Task>;
+};
+
+
+export type QueryTasksArgs = {
+  authorEmail: Scalars['String'];
 };
 
 export type Task = {
   __typename?: 'Task';
+  authorEmail: Scalars['String'];
+  createdAt?: Maybe<Scalars['Date']>;
   description?: Maybe<Scalars['String']>;
-  done?: Maybe<Scalars['Boolean']>;
-  id?: Maybe<Scalars['ID']>;
-  title?: Maybe<Scalars['String']>;
+  done: Scalars['Boolean'];
+  id: Scalars['ID'];
+  title: Scalars['String'];
+  updatedAt?: Maybe<Scalars['Date']>;
+};
+
+export type TaskInput = {
+  description?: InputMaybe<Scalars['String']>;
+  title: Scalars['String'];
+};
+
+export type TaskMutationResponse = MutationResponse & {
+  __typename?: 'TaskMutationResponse';
+  code: Scalars['Int'];
+  message: Scalars['String'];
+  success: Scalars['Boolean'];
+  task?: Maybe<Task>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -132,45 +159,80 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
+  MutationResponse: ResolversTypes['TaskMutationResponse'];
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Task: ResolverTypeWrapper<Task>;
+  TaskInput: TaskInput;
+  TaskMutationResponse: ResolverTypeWrapper<TaskMutationResponse>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
+  Date: Scalars['Date'];
   ID: Scalars['ID'];
+  Int: Scalars['Int'];
   Mutation: {};
+  MutationResponse: ResolversParentTypes['TaskMutationResponse'];
   Query: {};
   String: Scalars['String'];
   Task: Task;
+  TaskInput: TaskInput;
+  TaskMutationResponse: TaskMutationResponse;
 }>;
 
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  createTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'title'>>;
-  deleteTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'id'>>;
-  editTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationEditTaskArgs, 'id'>>;
-  editTaskStatus?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationEditTaskStatusArgs, 'done' | 'id'>>;
+  createTask?: Resolver<Maybe<ResolversTypes['TaskMutationResponse']>, ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'authorEmail' | 'task'>>;
+  deleteTask?: Resolver<Maybe<ResolversTypes['TaskMutationResponse']>, ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'id'>>;
+  editTask?: Resolver<Maybe<ResolversTypes['TaskMutationResponse']>, ParentType, ContextType, RequireFields<MutationEditTaskArgs, 'id' | 'task'>>;
+  editTaskStatus?: Resolver<Maybe<ResolversTypes['TaskMutationResponse']>, ParentType, ContextType, RequireFields<MutationEditTaskStatusArgs, 'done' | 'id'>>;
+}>;
+
+export type MutationResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['MutationResponse'] = ResolversParentTypes['MutationResponse']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'TaskMutationResponse', ParentType, ContextType>;
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  getAllTasks?: Resolver<Maybe<Array<Maybe<ResolversTypes['Task']>>>, ParentType, ContextType>;
+  tasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryTasksArgs, 'authorEmail'>>;
 }>;
 
 export type TaskResolvers<ContextType = any, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = ResolversObject<{
+  authorEmail?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  done?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  done?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TaskMutationResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['TaskMutationResponse'] = ResolversParentTypes['TaskMutationResponse']> = ResolversObject<{
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  task?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
+  Date?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
+  MutationResponse?: MutationResponseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Task?: TaskResolvers<ContextType>;
+  TaskMutationResponse?: TaskMutationResponseResolvers<ContextType>;
 }>;
 

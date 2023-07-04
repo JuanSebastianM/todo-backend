@@ -8,7 +8,7 @@
   "scripts": {
     "build": "yarn run generate; tsc; resolve-tspaths;",
     "start": "node ./dist/index.js",
-    "generate": "graphql-codegen --config codegen.ts"
+    "generate": "graphql-codegen"
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,8 @@
     "@graphql-codegen/typescript": "3.0.4",
     "@graphql-codegen/typescript-resolvers": "3.2.1",
     "@types/node": "20.1.0",
+    "dotenv": "^16.3.1",
+    "mongoose": "^7.3.1",
     "resolve-tspaths": "0.8.13",
     "typescript": "5.0.4"
   }

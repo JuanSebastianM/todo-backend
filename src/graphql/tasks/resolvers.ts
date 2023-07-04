@@ -1,38 +1,69 @@
-import { GraphQLResolveInfo } from 'graphql';
 import { Resolvers, Task } from 'generatedTypes/tasks';
-
-const task: Task = {
-  id: '1',
-  title: 'Task 1',
-  description: 'Description 1',
-  done: false,
-};
-
-const tasks = [task];
+import { TaskModel } from 'db/models/Task';
 
 export const resolvers: Resolvers = {
   Query: {
-    getAllTasks: () => {
-      return tasks;
+    tasks: async (_parent, args) => {
+      try {
+        const tasks = await TaskModel.find({ authorEmail: args.authorEmail });
+
+        const mappedTasks: Task[] = tasks.map((task) => {
+          return {
+            id: task._id.toString(),
+            title: task.title,
+            description: task.description,
+            done: task.done,
+            authorEmail: task.authorEmail,
+            createdAt: task.createdAt,
+            updatedAt: task.updatedAt,
+          };
+        });
+
+        return mappedTasks;
+      } catch (error) {
+        console.error(error);
+
+        return [];
+      }
     },
   },
   Mutation: {
-    createTask: (
-      _parent: any,
-      args: any,
-      _context: any,
-      _info: GraphQLResolveInfo
-    ) => {
-      const newTask: Task = {
-        id: '1',
-        title: args.title,
-        description: args.description,
-        done: false,
-      };
+    createTask: async (_parent, args) => {
+      try {
+        const createdTask = await TaskModel.create({
+          title: args.task.title,
+          description: args.task.description,
+          authorEmail: args.authorEmail,
+        });
 
-      tasks.push(newTask);
+        const mappedTask: Task = {
+          id: createdTask._id.toString(),
+          title: createdTask.title,
+          description: createdTask.description,
+          done: createdTask.done,
+          authorEmail: createdTask.authorEmail,
+          createdAt: createdTask.createdAt,
+          updatedAt: createdTask.updatedAt,
+        };
 
-      return newTask;
+        return {
+          code: 200,
+          message: 'Task created successfully',
+          success: true,
+          task: mappedTask,
+        };
+      } catch (error) {
+        console.error(error);
+
+        return {
+          code: 400,
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Error creating task. Please try again.',
+          success: false,
+        };
+      }
     },
   },
 };
