@@ -1,69 +1,35 @@
-import { Resolvers, Task } from 'generatedTypes/tasks';
-import { TaskModel } from 'db/models/Task';
+import { Resolvers } from 'generatedTypes/tasks';
 
 export const resolvers: Resolvers = {
   Query: {
-    tasks: async (_parent, args) => {
-      try {
-        const tasks = await TaskModel.find({ authorEmail: args.authorEmail });
+    tasks: async (_parent, { authorEmail }, { dataSources }) => {
+      const tasks = await dataSources.tasks.getAllTasksByAuhorEmail(
+        authorEmail
+      );
 
-        const mappedTasks: Task[] = tasks.map((task) => {
-          return {
-            id: task._id.toString(),
-            title: task.title,
-            description: task.description,
-            done: task.done,
-            authorEmail: task.authorEmail,
-            createdAt: task.createdAt,
-            updatedAt: task.updatedAt,
-          };
-        });
-
-        return mappedTasks;
-      } catch (error) {
-        console.error(error);
-
-        return [];
-      }
+      return tasks;
     },
   },
   Mutation: {
-    createTask: async (_parent, args) => {
-      try {
-        const createdTask = await TaskModel.create({
-          title: args.task.title,
-          description: args.task.description,
-          authorEmail: args.authorEmail,
-        });
+    createTask: async (_parent, { authorEmail, task }, { dataSources }) => {
+      const createdTask = await dataSources.tasks.createTask(task, authorEmail);
 
-        const mappedTask: Task = {
-          id: createdTask._id.toString(),
-          title: createdTask.title,
-          description: createdTask.description,
-          done: createdTask.done,
-          authorEmail: createdTask.authorEmail,
-          createdAt: createdTask.createdAt,
-          updatedAt: createdTask.updatedAt,
-        };
+      return createdTask;
+    },
+    editTaskBody: async (_parent, { id, task }, { dataSources }) => {
+      const updatedTask = await dataSources.tasks.editTaskBody(id, task);
 
-        return {
-          code: 200,
-          message: 'Task created successfully',
-          success: true,
-          task: mappedTask,
-        };
-      } catch (error) {
-        console.error(error);
+      return updatedTask;
+    },
+    editTaskStatus: async (_parent, { id, done }, { dataSources }) => {
+      const updatedTask = await dataSources.tasks.editTaskStatus(id, done);
 
-        return {
-          code: 400,
-          message:
-            error instanceof Error
-              ? error.message
-              : 'Error creating task. Please try again.',
-          success: false,
-        };
-      }
+      return updatedTask;
+    },
+    deleteTask: async (_parent, { id }, { dataSources }) => {
+      const deletedTask = await dataSources.tasks.deleteTask(id);
+
+      return deletedTask;
     },
   },
 };

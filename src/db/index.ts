@@ -15,8 +15,12 @@ export const connectToDB = async () => {
 
     if (connection.readyState === 1) {
       console.log('Connected to DB successfully.');
+
+      return connection;
     }
   } catch (error) {
     console.log(error);
+
+    return;
   }
 };

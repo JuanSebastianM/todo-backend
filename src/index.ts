@@ -5,14 +5,26 @@ import {
 } from '@apollo/server/plugin/landingPage/default';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { connectToDB } from 'db/index';
+import { TaskModel } from 'db/models/Task';
 import { readFileSync } from 'fs';
-import { resolvers } from 'tasks/resolvers';
+import { TasksDataSource } from 'graphql/datasources/Task';
+import { resolvers } from 'graphql/tasks/resolvers';
 
-await connectToDB();
+export interface ContextValue extends BaseContext {
+  dataSources: {
+    tasks: TasksDataSource;
+  };
+}
+
+const connection = await connectToDB();
+
+if (!connection) {
+  throw new Error('Could not connect to DB');
+}
 
 const typeDefs = readFileSync('src/graphql/tasks/typeDefs.graphql', 'utf-8');
 
-const server = new ApolloServer<BaseContext>({
+const server = new ApolloServer<ContextValue>({
   typeDefs,
   resolvers,
   plugins: [
@@ -25,6 +37,16 @@ const server = new ApolloServer<BaseContext>({
   ],
 });
 
-const { url } = await startStandaloneServer(server);
+const { url } = await startStandaloneServer(server, {
+  context: async () => {
+    const tasksDataSource = new TasksDataSource(TaskModel);
+
+    return {
+      dataSources: {
+        tasks: tasksDataSource,
+      },
+    };
+  },
+});
 
 console.log(`🚀 Server ready at: ${url}`);

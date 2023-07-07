@@ -5,6 +5,7 @@ const config: CodegenConfig = {
   generates: {
     'src/__generated__/tasks.ts': {
       config: {
+        contextType: '../index#ContextValue',
         scalars: {
           Date: 'Date',
         },

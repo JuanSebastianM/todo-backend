@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-type Task = {
+export type Task = {
   title: string;
   description: string;
   done: boolean;
@@ -9,7 +9,7 @@ type Task = {
   updatedAt: Date;
 };
 
-type TaskModelType = mongoose.Model<Task>;
+export type TaskModelType = mongoose.Model<Task>;
 
 const TaskSchema = new mongoose.Schema<Task>(
   {

@@ -14,8 +14,9 @@
     "baseUrl": ".",
     "paths": {
       "db/*": ["src/db/*"],
-      "tasks/*": ["src/graphql/tasks/*"],
-      "generatedTypes/*": ["src/__generated__/*"]
+      "graphql/*": ["src/graphql/*"],
+      "generatedTypes/*": ["src/__generated__/*"],
+      "utils/*": ["src/utils/*"]
     }
   },
   "include": ["src"]

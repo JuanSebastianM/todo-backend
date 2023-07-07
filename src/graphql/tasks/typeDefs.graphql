@@ -34,7 +34,7 @@ type Query {
 
 type Mutation {
   createTask(authorEmail: String!, task: TaskInput!): TaskMutationResponse
-  editTask(id: ID!, task: TaskInput!): TaskMutationResponse
+  editTaskBody(id: ID!, task: TaskInput!): TaskMutationResponse
   editTaskStatus(id: ID!, done: Boolean!): TaskMutationResponse
   deleteTask(id: ID!): TaskMutationResponse
 }
