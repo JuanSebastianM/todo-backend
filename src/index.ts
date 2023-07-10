@@ -11,6 +11,7 @@ import { TasksDataSource } from 'graphql/datasources/Task';
 import { resolvers } from 'graphql/tasks/resolvers';
 
 export interface ContextValue extends BaseContext {
+  authorizationToken: string;
   dataSources: {
     tasks: TasksDataSource;
   };
@@ -38,10 +39,12 @@ const server = new ApolloServer<ContextValue>({
 });
 
 const { url } = await startStandaloneServer(server, {
-  context: async () => {
+  context: async ({ req }) => {
+    const authorizationToken = req.headers.authorization || '';
     const tasksDataSource = new TasksDataSource(TaskModel);
 
     return {
+      authorizationToken,
       dataSources: {
         tasks: tasksDataSource,
       },

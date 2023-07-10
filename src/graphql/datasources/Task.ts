@@ -61,7 +61,7 @@ export class TasksDataSource {
     };
   }
 
-  async getAllTasksByAuhorEmail(authorEmail: string) {
+  async getAllTasksByAuthorEmail(authorEmail: string) {
     try {
       const tasks = await this.taskModel.find({ authorEmail });
 
@@ -81,8 +81,13 @@ export class TasksDataSource {
 
   async createTask(
     taskInput: TaskInput,
-    authorEmail: string
+    authorEmail: string,
+    authenticationToken: string
   ): Promise<TaskMutationResponse> {
+    if (!authenticationToken) {
+      this.throwUnauthenticatedUserError();
+    }
+
     try {
       const createdTask = await this.taskModel.create({
         title: taskInput.title,
@@ -108,8 +113,13 @@ export class TasksDataSource {
 
   async editTaskBody(
     taskId: string,
-    newTaskBody: TaskInput
+    newTaskBody: TaskInput,
+    authenticationToken: string
   ): Promise<TaskMutationResponse> {
+    if (!authenticationToken) {
+      this.throwUnauthenticatedUserError();
+    }
+
     try {
       const updatedTask = await this.taskModel.findByIdAndUpdate(
         taskId,
@@ -144,8 +154,13 @@ export class TasksDataSource {
 
   async editTaskStatus(
     id: string,
-    done: boolean
+    done: boolean,
+    authenticationToken: string
   ): Promise<TaskMutationResponse> {
+    if (!authenticationToken) {
+      this.throwUnauthenticatedUserError();
+    }
+
     try {
       const updatedTask = await this.taskModel.findByIdAndUpdate(
         id,
@@ -175,7 +190,14 @@ export class TasksDataSource {
     }
   }
 
-  async deleteTask(id: string): Promise<TaskMutationResponse> {
+  async deleteTask(
+    id: string,
+    authenticationToken: string
+  ): Promise<TaskMutationResponse> {
+    if (!authenticationToken) {
+      this.throwUnauthenticatedUserError();
+    }
+
     try {
       const deletedTask = await this.taskModel.findByIdAndDelete(id);
 
