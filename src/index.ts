@@ -9,6 +9,7 @@ import { TaskModel } from 'db/models/Task';
 import { readFileSync } from 'fs';
 import { TasksDataSource } from 'graphql/datasources/Task';
 import { resolvers } from 'graphql/tasks/resolvers';
+import depthLimit from 'graphql-depth-limit';
 
 export interface ContextValue extends BaseContext {
   authorizationToken: string;
@@ -28,14 +29,7 @@ const typeDefs = readFileSync('src/graphql/tasks/typeDefs.graphql', 'utf-8');
 const server = new ApolloServer<ContextValue>({
   typeDefs,
   resolvers,
-  plugins: [
-    process.env.NODE_ENV === 'production'
-      ? ApolloServerPluginLandingPageProductionDefault({
-          embed: true,
-          graphRef: process.env.APOLLO_GRAPH_REF ?? '',
-        })
-      : ApolloServerPluginLandingPageLocalDefault({ embed: true }),
-  ],
+  validationRules: [depthLimit(2)],
 });
 
 const { url } = await startStandaloneServer(server, {
