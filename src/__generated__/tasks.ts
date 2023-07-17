@@ -55,7 +55,13 @@ export type MutationResponse = {
 
 export type Query = {
   __typename?: 'Query';
+  task?: Maybe<Task>;
   tasks: Array<Task>;
+};
+
+
+export type QueryTaskArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -206,6 +212,7 @@ export type MutationResponseResolvers<ContextType = ContextValue, ParentType ext
 }>;
 
 export type QueryResolvers<ContextType = ContextValue, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  task?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryTaskArgs, 'id'>>;
   tasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryTasksArgs, 'authorEmail'>>;
 }>;
 

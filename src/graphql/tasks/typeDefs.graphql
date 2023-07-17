@@ -30,6 +30,7 @@ type TaskMutationResponse implements MutationResponse {
 
 type Query {
   tasks(authorEmail: String!): [Task!]!
+  task(id: ID!): Task
 }
 
 type Mutation {

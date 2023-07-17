@@ -1,4 +1,4 @@
-export const TaskMutationResponseMessages = {
+export const TaskResponseMessages = {
   BODY_UPDATED: 'Task info updated successfully.',
   CREATED: 'Task created successfully.',
   DELETED: 'Task deleted successfully.',

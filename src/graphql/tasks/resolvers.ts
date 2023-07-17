@@ -9,6 +9,11 @@ export const resolvers: Resolvers = {
 
       return tasks;
     },
+    task: async (_parent, { id }, { dataSources }) => {
+      const foundTask = await dataSources.tasks.getTaskById(id);
+
+      return foundTask;
+    },
   },
   Mutation: {
     createTask: async (

@@ -3,7 +3,7 @@ import { Task, TaskInput, TaskMutationResponse } from 'generatedTypes/tasks';
 import { Task as MongoTaskType } from 'db/models/Task';
 import { Document, Types } from 'mongoose';
 import { GraphQLError } from 'graphql';
-import { TaskMutationResponseMessages } from 'utils/constants';
+import { TaskResponseMessages } from 'utils/constants';
 
 export class TasksDataSource {
   private taskModel;
@@ -79,6 +79,22 @@ export class TasksDataSource {
     }
   }
 
+  async getTaskById(id: string) {
+    try {
+      const task = await this.taskModel.findById(id);
+
+      if (!task) {
+        throw new Error(TaskResponseMessages.NOT_FOUND);
+      }
+
+      const mappedTask = this.getMappedTask(task);
+
+      return mappedTask;
+    } catch {
+      return null;
+    }
+  }
+
   async createTask(
     taskInput: TaskInput,
     authorEmail: string,
@@ -99,14 +115,14 @@ export class TasksDataSource {
 
       return this.getTaskMutationSuccessResponse(
         mappedTask,
-        TaskMutationResponseMessages.CREATED
+        TaskResponseMessages.CREATED
       );
     } catch (error) {
       console.error(error);
 
       return this.getTaskMutationErrorResponse(
         error,
-        TaskMutationResponseMessages.ERROR_CREATING
+        TaskResponseMessages.ERROR_CREATING
       );
     }
   }
@@ -133,21 +149,21 @@ export class TasksDataSource {
       );
 
       if (!updatedTask) {
-        throw new Error(TaskMutationResponseMessages.NOT_FOUND);
+        throw new Error(TaskResponseMessages.NOT_FOUND);
       }
 
       const mappedUpdatedTask = this.getMappedTask(updatedTask);
 
       return this.getTaskMutationSuccessResponse(
         mappedUpdatedTask,
-        TaskMutationResponseMessages.BODY_UPDATED
+        TaskResponseMessages.BODY_UPDATED
       );
     } catch (error) {
       console.error(error);
 
       return this.getTaskMutationErrorResponse(
         error,
-        TaskMutationResponseMessages.ERROR_UPDATING_BODY
+        TaskResponseMessages.ERROR_UPDATING_BODY
       );
     }
   }
@@ -171,21 +187,21 @@ export class TasksDataSource {
       );
 
       if (!updatedTask) {
-        throw new Error(TaskMutationResponseMessages.NOT_FOUND);
+        throw new Error(TaskResponseMessages.NOT_FOUND);
       }
 
       const mappedUpdatedTask = this.getMappedTask(updatedTask);
 
       return this.getTaskMutationSuccessResponse(
         mappedUpdatedTask,
-        TaskMutationResponseMessages.STATUS_UPDATED
+        TaskResponseMessages.STATUS_UPDATED
       );
     } catch (error) {
       console.log(error);
 
       return this.getTaskMutationErrorResponse(
         error,
-        TaskMutationResponseMessages.ERROR_UPDATING_STATUS
+        TaskResponseMessages.ERROR_UPDATING_STATUS
       );
     }
   }
@@ -202,21 +218,21 @@ export class TasksDataSource {
       const deletedTask = await this.taskModel.findByIdAndDelete(id);
 
       if (!deletedTask) {
-        throw new Error(TaskMutationResponseMessages.NOT_FOUND);
+        throw new Error(TaskResponseMessages.NOT_FOUND);
       }
 
       const mappedDeletedTask = this.getMappedTask(deletedTask);
 
       return this.getTaskMutationSuccessResponse(
         mappedDeletedTask,
-        TaskMutationResponseMessages.DELETED
+        TaskResponseMessages.DELETED
       );
     } catch (error) {
       console.error(error);
 
       return this.getTaskMutationErrorResponse(
         error,
-        TaskMutationResponseMessages.ERROR_DELETING
+        TaskResponseMessages.ERROR_DELETING
       );
     }
   }
